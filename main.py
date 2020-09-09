@@ -35,13 +35,14 @@ def game():
     guess = input("What is your guess? ")
     if guess == songName:
         print("Correct! +3 Points")
-        points = points + 1
+        points = points + 3
         game()
     else:
       print(re.sub('[^A-Z]', ' _ ', songName) + f"by {artistName}")
       guess = input("What is your guess? ")
       if guess == songName:
           print("Correct! +1 Points")
+          points = points + 1
           game()
       else:
         gameOver()   
