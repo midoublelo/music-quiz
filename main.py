@@ -5,6 +5,7 @@ with open("data/songs.txt", "r") as songs:
     lineCount = songs.read().splitlines()
 
 username = ""
+points = 0
 
 def logIn():
     global username
@@ -17,8 +18,6 @@ def logIn():
             game()
         else:
             print("Username or Password is incorrect!")
-
-points = 0
 
 def gameOver():
   global username
