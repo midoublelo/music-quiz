@@ -3,6 +3,7 @@ import random
 import time
 import threading
 import configparser
+import getpass
 
 with open("data/songs.txt", "r") as songs:
     lineCount = songs.read().splitlines()
@@ -31,10 +32,17 @@ username = ""
 with open("data/message.txt", "r") as message:
     print(message.read())
 
+def welcome():
+    hasAccount = input("Do you already have an account? [y/n] ")
+    if hasAccount.lower() == "y":
+        login()
+    if hasAccount.lower() == "n":
+        register()
+
 def login():
     global username
     nameInput = input("Enter your username: ").lower()
-    passInput = input("Enter your password: ")
+    passInput = getpass.getpass('Enter your password: ')
     with open("data/users.txt", "r") as users:
         if (nameInput + ":" + passInput + "\n") in users.readlines():
             print("Logged in successfully.")
@@ -44,6 +52,16 @@ def login():
         else:
             print("Username or Password is incorrect!")
             login()
+
+def register():
+        nameInput = input("Enter your desired username: ")
+        passInput = getpass.getpass("Enter your desired password: ")
+        with open("data/users.txt", "a+") as users:
+            users.write(nameInput + ":" + passInput + "\n")
+            print(f"Created account for '{nameInput}'")
+        login()
+        
+
 
 def gameOver():
     global username
@@ -120,4 +138,4 @@ def game():
         else:
             gameOver()
 
-login()
+welcome()
