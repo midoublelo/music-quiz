@@ -4,9 +4,13 @@ import time
 import threading
 import configparser
 import getpass
+import operator
 
-with open("data/songs.txt", "r") as songs:
-    lineCount = songs.read().splitlines()
+songs = open("data/songs.txt", "r")
+lineCount = songs.read().splitlines()
+
+# with open("data/songs.txt", "r") as songs:
+#     lineCount = songs.read().splitlines()
 
 # config = SafeConfigParser()
 # config.read('settings.ini')
@@ -38,6 +42,8 @@ def welcome():
         login()
     if hasAccount.lower() == "n":
         register()
+    else:
+        welcome()
 
 def login():
     global username
@@ -60,8 +66,6 @@ def register():
             users.write(nameInput + ":" + passInput + "\n")
             print(f"Created account for '{nameInput}'")
         login()
-        
-
 
 def gameOver():
     global username
@@ -70,30 +74,16 @@ def gameOver():
     print(f"Your score: {points}")
     with open("data/scores.txt", "a+") as scoreFile:
         scoreFile.write(f"{username}:{points}\n")
-    raise SystemExit
-    # bestUser, bestPoints = "", -1
-    # for line in scoreFile:
-    #     name, score = line.split(':')
-    #     if score > bestPoints:
-    #         bestUser = username
-    #         bestPoints = points
-    # print(f"Best Points {bestPoints}")
-    # print(f"Best User {bestUser}")
+    topScores()
 
-    # for line in scoreFile.readlines():
-    #     user, score = line.split(':')
-    #     if score.isdigit() and points > score:
-    #         points = int(score)
+def topScores():
+    scores = {}
+    with open("data/scores.txt", "r") as scoreFile:
+        for line in scoreFile.readlines():
+            scores[line.split("'")[0].strip()] = int(line.split(':')[1].strip())
+            # songName, artistName = line.split(',')
+    print(sorted(scores.items(), key=lambda x: x[1])[::-1])[:5]
 
-    # if int(points) > score:
-    #     scoreFile.write(f"{username}:{points}")
-    # scoreList = []
-    # for line in scoreFile.readlines():
-    #     user, score = line.split(':')
-    #     score = int(score.strip())
-    #     name = name.strip()
-    #     scoreList.append(f"{username}:{points}")
-    #     print(scoreList)
 
 # def countdown():
 #     global timer
