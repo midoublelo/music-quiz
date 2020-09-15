@@ -1,75 +1,66 @@
 import re
 import random
-import time
-import threading
-import configparser
 import getpass
-import operator
 
-songs = open("data/songs.txt", "r")
-lineCount = songs.read().splitlines()
+songs = open("data/songs.txt", "r") # <- Opens the 'songs.txt' file.
+lineCount = songs.read().splitlines() # <- Counts up the lines and splits them.
 
-# with open("data/songs.txt", "r") as songs:
-#     lineCount = songs.read().splitlines()
+points = 0 # Global points variable.
+username = "" # Stored username of the currently logged in user.
 
-# config = SafeConfigParser()
-# config.read('settings.ini')
-
-# config = configparser.ConfigParser()
-# config['accounts'] = {'Registration': 'False'}
-# config['countdown'] = {'Enabled': 'False',
-#                         'Timer': '15'}
-# with open("config.ini", 'w') as configfile:
-#     config.write(configfile)
-
-# config = configparser.ConfigParser()
-# config.read('config.ini')
-
-# timerEnabled = config['countdown']['enabled']
-timerEnabled = False
-# timer = config['countdown']['timer']
-timer = 15
-
-points = 0
-username = ""
-
-with open("data/message.txt", "r") as message:
-    print(message.read())
+with open("data/message.txt", "r") as message: # Opens the 'message.txt' file.
+    print(message.read()) # Prints out a welcome message from the 'message.txt' file.
 
 def welcome():
-    hasAccount = input("Do you already have an account? [y/n] ")
+    '''
+    Starting function that allows for
+    the user to login or register.
+    '''
+    hasAccount = input("Do you already have an account? [y/n] ") # Asks the user to input whether they have an account.
     if hasAccount.lower() == "y":
         login()
     if hasAccount.lower() == "n":
         register()
     else:
-        welcome()
+        welcome() # Restarts the welcome screen if the input is invalid.
 
 def login():
-    global username
-    nameInput = input("Enter your username: ").lower()
-    passInput = getpass.getpass('Enter your password: ')
-    with open("data/users.txt", "r") as users:
-        if (nameInput + ":" + passInput + "\n") in users.readlines():
+    '''
+    This function allows the user to login
+    with a pre-existing account. Password is
+    protected using the 'getpass' library,
+    though this feature is not essential.
+    '''
+    nameInput = input("Enter your username: ").lower() # Allows the user to input their username.
+    passInput = getpass.getpass('Enter your password: ') # Allows the user to input their password. Protected by the 'getpass' library.
+    with open("data/users.txt", "r") as users: # Opens the 'users.txt' file.
+        if (nameInput + ":" + passInput + "\n") in users.readlines(): # Uses the data inputted by the user to see if their account is in the file.
             print("Logged in successfully.")
-            # print(timerEnabled)
-            username = nameInput
+            username = nameInput # Sets 'username' to their input so that it can be used later. NOTE: Likely unnecessary, could just use nameInput.
             game()
         else:
-            print("Username or Password is incorrect!")
-            login()
+            print("Username or Password is incorrect!") 
+            login() # If the account details are invalid, call the login function again.
 
 def register():
-        nameInput = input("Enter your desired username: ")
-        passInput = getpass.getpass("Enter your desired password: ")
-        with open("data/users.txt", "a+") as users:
-            users.write(nameInput + ":" + passInput + "\n")
-            print(f"Created account for '{nameInput}'")
-        login()
+    '''
+    This function lets the user create a new
+    account while running the game. Password is
+    protected using the 'getpass' library,
+    though this feature is not essential.
+    '''
+    nameInput = input("Enter your desired username: ") # Allows the user to input their desired username.
+    passInput = getpass.getpass("Enter your desired password: ") # Allows the user to input their desired password. Visually protected by the 'getpass' library.
+    with open("data/users.txt", "a+") as users:
+        users.write(nameInput + ":" + passInput + "\n") # Writes account details to 'users.txt' in the same format as the login function.
+        print(f"Created account for '{nameInput}'") # NOTE: Could ask user to retype password before registration to verify that they have typed it correctly?
+    login()
 
 def gameOver():
-    global username
-    global points
+    '''
+    This function prints the user's score and logs
+    the score of the user in 'scores.txt'
+    '''
     print("Game over!")
     print(f"Your score: {points}")
     with open("data/scores.txt", "a+") as scoreFile:
@@ -77,6 +68,10 @@ def gameOver():
     topScores()
 
 def topScores():
+    '''
+    This function prints out the Top 5 Scores
+    and the players who got them.
+    '''
     scores = {}
     with open("data/scores.txt", "r") as scoreFile:
         for line in scoreFile.readlines():
@@ -84,48 +79,28 @@ def topScores():
             # songName, artistName = line.split(',')
     print(sorted(scores.items(), key=lambda x: x[1])[::-1])[:5]
 
-
-# def countdown():
-#     global timer
-#     for i in range(timer):
-#         time.sleep(1)
-#         timer -= 1
-#         if timer == 0:
-#             print("\nTimes up!\nType anything to close the game.")
-#             gameOver()
-#             exit()
-
 def game():
-    global points
-    global timer
-    # if timerEnabled == True:
-    #     t = threading.Thread(target=countdown)
-    line = random.choice(lineCount)
-    songName, artistName = line.split(',')
-    print(re.sub('[^A-Z]', ' _ ', songName) + f"by {artistName}")
-    if timerEnabled == True:
-        # t.start()
-        guess = input(f"What is your guess? ({timer}s): ")
-    else:
-        guess = input("What is your guess? ")
-    if guess.lower() == songName.lower() or guess == songName:
+    '''
+    Function for main game flow.
+    '''
+    # global points
+    line = random.choice(lineCount) # <- Chooses a random line from the 'songs.txt' file.
+    songName, artistName = line.split(',') # <- Splits the line in two from the ',' and assigns a variable to both sides.
+    print(re.sub('[^A-Z]', ' _ ', songName) + f"by {artistName}") # <- Uses a regular expression to replace lower case letters with underscores.
+    guess = input("What is your guess? ") # <- Allows for the user to input their song guess.
+    if guess.lower() == songName.lower() or guess == songName: # <- Checks the guess in normal and lowercase.
         print("Correct! +3 Points")
         points = points + 3
-        timer = 15
-        game()
-    elif timer != 0:
+        game() # <- Since the user got it right, the game will restart.
+    else:
         print("Incorrect! One more guess..!")
         print(re.sub('[^A-Z]', ' _ ', songName) + f"by {artistName}")
-        if timerEnabled == True:
-            guess = input(f"What is your guess? ({timer}s): ")
-        else:
-            guess = input("What is your guess? ")
+        guess = input("What is your guess? ")
         if guess.lower() == songName.lower() or guess == songName:
             print("Correct! +1 Points")
-            points = points + 1
-            timer = 15
+            points = points + 1 # <- Gives only 1 point instead of 3 points due to getting it right on the second try.
             game()
         else:
-            gameOver()
+            gameOver() # <- Calls the gameOver function.
 
 welcome()
