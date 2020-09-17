@@ -25,6 +25,7 @@ def welcome():
         welcome() # Restarts the welcome screen if the input is invalid.
 
 def login():
+    global username
     '''
     This function allows the user to login
     with a pre-existing account. Password is
@@ -57,6 +58,8 @@ def register():
     login()
 
 def gameOver():
+    global points
+    global username
     '''
     This function prints the user's score and logs
     the score of the user in 'scores.txt'
@@ -83,7 +86,7 @@ def game():
     '''
     Function for main game flow.
     '''
-    # global points
+    global points
     line = random.choice(lineCount) # <- Chooses a random line from the 'songs.txt' file.
     songName, artistName = line.split(',') # <- Splits the line in two from the ',' and assigns a variable to both sides.
     print(re.sub('[^A-Z]', ' _ ', songName) + f"by {artistName}") # <- Uses a regular expression to replace lower case letters with underscores.
