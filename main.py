@@ -16,7 +16,7 @@ def welcome():
     Starting function that allows for
     the user to login or register.
     '''
-    hasAccount = input("Do you already have an account? [y/n] ") # Asks the user to input whether they have an account.
+    hasAccount = input("\nDo you already have an account? [y/n] ") # Asks the user to input whether they have an account.
     if hasAccount.lower() == "y":
         login()
     if hasAccount.lower() == "n":
@@ -64,10 +64,10 @@ def gameOver():
     This function prints the user's score and logs
     the score of the user in 'scores.txt'
     '''
-    print("Game over!")
-    print(f"Your score: {points}")
+    print("\nGame over!")
+    print(f"Your score: {points}\n")
     with open("data/scores.txt", "a+") as scoreFile:
-        scoreFile.write(f"{username}:{points}\n")
+        scoreFile.write(f"{username}:{points}\n") # Writes user's score to the file
     topScores()
 
 def topScores():
@@ -75,12 +75,18 @@ def topScores():
     This function prints out the Top 5 Scores
     and the players who got them.
     '''
-    scores = {}
     with open("data/scores.txt", "r") as scoreFile:
-        for line in scoreFile.readlines():
-            scores[line.split("'")[0].strip()] = int(line.split(':')[1].strip())
-            # songName, artistName = line.split(',')
-    print(sorted(scores.items(), key=lambda x: x[1])[::-1])[:5]
+        scoreList = {} # Creates a dictionary to store scores
+        scoreLines = scoreFile.readlines() # Reads each line of the score list
+        for line in scoreLines: # Loops through each line of the score file
+            topName, topScore = line.split(':') # Splits the name and score into different variables from the ':'
+            topScore = int(topScore) # Turn the top score into an integer
+            if topName not in scoreList or topScore > scoreList[topName]: # Checks if the current user is not in the dictionary or if this is that users highest score
+                scoreList[topName] = topScore # Inserts the user and its score into the dictionary
+        sortedList = sorted(scoreList.items(), key=lambda x: x[1], reverse=True) # Sorts the list in descending order. Uses the lambda to only sort by the 2nd element, which is the user score. 
+        topFive = sortedList[0:5] # Gets a slice of the top 5 elements in the dictionary
+        for i in range(5):
+            print(f"{i+1}. {topFive[i][0]} - {topFive[i][1]}") # Prints the top 5 results
 
 def game():
     '''
