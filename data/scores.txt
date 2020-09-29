@@ -1,0 +1,5 @@
+millo:300
+ivor:3
+casper:6
+random:15
+admin:21
