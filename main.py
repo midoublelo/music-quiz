@@ -93,23 +93,23 @@ def game():
     Function for main game flow.
     '''
     global points
-    line = random.choice(lineCount) # <- Chooses a random line from the 'songs.txt' file.
-    songName, artistName = line.split(',') # <- Splits the line in two from the ',' and assigns a variable to both sides.
-    print(re.sub('[^A-Z]', ' _ ', songName) + f"by {artistName}") # <- Uses a regular expression to replace lower case letters with underscores.
-    guess = input("What is your guess? ") # <- Allows for the user to input their song guess.
-    if guess.lower() == songName.lower() or guess == songName: # <- Checks the guess in normal and lowercase.
+    line = random.choice(lineCount) # Chooses a random line from the 'songs.txt' file.
+    songName, artistName = line.split(',') # Splits the line in two from the ',' and assigns a variable to both sides.
+    print(re.sub('[a-z]', '_', songName) + f" by {artistName}") # Uses a regular expression to replace lower case letters with underscores.
+    guess = input("What is your guess? ") # Allows for the user to input their song guess.
+    if guess.lower() == songName.lower() or guess == songName: # Checks the guess in normal and lowercase.
         print("Correct! +3 Points")
         points = points + 3
-        game() # <- Since the user got it right, the game will restart.
+        game() # Since the user got it right, the game will restart.
     else:
         print("Incorrect! One more guess..!")
-        print(re.sub('[^A-Z]', ' _ ', songName) + f"by {artistName}")
+        print(re.sub('[^A-Z]', '_', songName) + f" by {artistName}")
         guess = input("What is your guess? ")
         if guess.lower() == songName.lower() or guess == songName:
             print("Correct! +1 Points")
-            points = points + 1 # <- Gives only 1 point instead of 3 points due to getting it right on the second try.
+            points = points + 1 # Gives only 1 point instead of 3 points due to getting it right on the second try.
             game()
         else:
-            gameOver() # <- Calls the gameOver function.
+            gameOver() # Calls the gameOver function.
 
 welcome()
